@@ -11,7 +11,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 app.use(routes);
 
 require('dotenv').config();
@@ -20,8 +20,7 @@ mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false
-}).then(mongoData => {
-    console.log(mongoData);
+}).then(() => {
     app.listen(PORT, () => {
         console.log(`APP LISTENING ON PORT ${PORT}`);
     });
