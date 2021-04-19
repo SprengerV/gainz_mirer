@@ -27,7 +27,6 @@ router.post('/', (req, res) => {
                 res.status(400).json({ message: 'Failed to create workout'});
         });
 });
-// possibly get workout to populate on save
 router.put('/:id', (req, res) => {
     const id = req.params.id;
     Exercise
@@ -54,9 +53,22 @@ router.put('/:id', (req, res) => {
                 });
         });
 });
-// TODO get GET to return last 7 workouts
 router.get('/range', (req, res) => {
-
+    Workout
+        .find({})
+        .sort([['day', -1]])
+        .limit(7)
+        .populate('exercises')
+        .then(data => {
+            data ?
+                res
+                    .status(200)
+                    .json(data)
+                :
+                res
+                    .status(400)
+                    .json({ message: 'No workouts found' });
+        });
 });
 
 module.exports = router;
