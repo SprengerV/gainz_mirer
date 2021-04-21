@@ -7,6 +7,7 @@ router.get('/', (req, res) => {
     Workout
         .find({})
         .then(wos => {
+            console.log(wos[0])
             wos? res.status(200).json(wos) :
                 res.status(400).json({ message: 'No workouts found' });
         });
