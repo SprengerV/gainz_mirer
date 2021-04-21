@@ -6,24 +6,9 @@ const Exercise = require('../../models').Exercise;
 router.get('/', (req, res) => {
     Workout
         .find({})
-        .populate('exercises')
-        .aggregate({
-            $project: {
-                totalDuration: {
-                    $sum: "$exercise_duration"
-                }
-            }
-        })
         .then(wos => {
-            if (!wos) {
-                res
-                    .status(400)
-                    .json({ message: 'No workouts found' });
-                return;
-            }
-            res
-                .status(200)
-                .json(wos);
+            wos? res.status(200).json(wos) :
+                res.status(400).json({ message: 'No workouts found' });
         });
 });
 router.post('/', (req, res) => {
@@ -35,29 +20,11 @@ router.post('/', (req, res) => {
         });
 });
 router.put('/:id', (req, res) => {
-    const id = req.params.id;
-    Exercise
-        .create(req.body)
-        .then((ex) => {
-            if (!ex) {
-                res
-                    .status(400)
-                    .json({ message: 'Exercise not created' });
-                return;
-            }
-            Workout
-                .findOneAndUpdate({ _id: id }, { $push: { exercises: ex } })
-                .then(wo => {
-                    if (!wo) {
-                        res
-                            .status(400)
-                            .json({ message: 'Workout not found' });
-                        return;
-                    }
-                    res
-                        .status(200)
-                        .json(wo);
-                });
+    Workout
+        .findOneAndUpdate({ _id: req.params.id }, { $push: { exercises: req.body } })
+        .then(wo => {
+            wo ? res.status(200).json(wo) :
+                res.status(400).json({ message: 'Workout not found' });
         });
 });
 router.get('/range', (req, res) => {
@@ -65,16 +32,9 @@ router.get('/range', (req, res) => {
         .find({})
         .sort([['day', -1]])
         .limit(7)
-        .populate('exercises')
         .then(data => {
-            data ?
-                res
-                    .status(200)
-                    .json(data)
-                :
-                res
-                    .status(400)
-                    .json({ message: 'No workouts found' });
+            data ? res.status(200).json(data) :
+                res.status(400).json({ message: 'No workouts found' });
         });
 });
 
