@@ -33,6 +33,8 @@ workoutSchema.virtual('totalDuration').get(function() {
         return this.exercises.reduce((acc, curr) => {
             return acc + curr.duration;
         }, 0);
+    } else {
+        return 0
     }
 });
 const Workout = mongoose.model('Workout', workoutSchema);
