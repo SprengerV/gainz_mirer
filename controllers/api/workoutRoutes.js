@@ -7,6 +7,13 @@ router.get('/', (req, res) => {
     Workout
         .find({})
         .populate('exercises')
+        .aggregate({
+            $project: {
+                totalDuration: {
+                    $sum: "$exercise_duration"
+                }
+            }
+        })
         .then(wos => {
             if (!wos) {
                 res
